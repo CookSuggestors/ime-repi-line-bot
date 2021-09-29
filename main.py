@@ -60,7 +60,54 @@ def callback():
 def handle_message(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=event.message.text)) #ここでオウム返しのメッセージを返します。
+        carousel_template_message = TemplateSendMessage(
+            alt_text='Carousel template',
+            template=CarouselTemplate(
+                columns=[
+                    CarouselColumn(
+                        thumbnail_image_url='https://www.kikkoman.co.jp/homecook/search/recipe/img/00006600.jpg',
+                        title='this is menu1',
+                        text='description1',
+                        actions=[
+                            PostbackAction(
+                                label='postback1',
+                                display_text='postback text1',
+                                data='action=buy&itemid=1'
+                            ),
+                            MessageAction(
+                                label='message1',
+                                text='message text1'
+                            ),
+                            URIAction(
+                                label='uri1',
+                                uri='http://example.com/1'
+                            )
+                        ]
+                    ),
+                    CarouselColumn(
+                        thumbnail_image_url='https://www.kikkoman.co.jp/homecook/search/recipe/img/00006600.jpg',
+                        title='this is menu2',
+                        text='description2',
+                        actions=[
+                            PostbackAction(
+                                label='postback2',
+                                display_text='postback text2',
+                                data='action=buy&itemid=2'
+                            ),
+                            MessageAction(
+                                label='message2',
+                                text='message text2'
+                            ),
+                            URIAction(
+                                label='uri2',
+                                uri='http://example.com/2'
+                            )
+                        ]
+                    )
+                ]
+            )
+        )
+        # TextSendMessage(text=event.message.text)) 
  
 # ポート番号の設定
 if __name__ == "__main__":
