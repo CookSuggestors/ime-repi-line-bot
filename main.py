@@ -76,7 +76,7 @@ def handle_event(event):
         sendMessage("調理頑張ってください！", user_id)
     else:
         # レシピが提案できるかどうか
-        if(recipeData[user_id]["index"] + 2 <= len(recipeData[user_id]["recipe"])):
+        if(recipeData[user_id]["index"] + 1 <= len(recipeData[user_id]["recipe"])):
             sendMessage("こちらのレシピはいかがでしょうか?", user_id)
             sendCarousel(getDisplayCarousel(recipeData, user_id), user_id)
             sendConfirm(user_id)
@@ -168,6 +168,12 @@ def getRecipe():
         },
         {
             "title": "ポトフ2",
+            "image_url": "https://www.kikkoman.co.jp/homecook/search/recipe/img/00006600.jpg",
+            "material": ["にんじん", "タマネギ"],
+            "url": "https://www.kikkoman.co.jp/homecook/search/recipe/00006600/index.html"
+        },
+        {
+            "title": "ポトフ3",
             "image_url": "https://www.kikkoman.co.jp/homecook/search/recipe/img/00006600.jpg",
             "material": ["にんじん", "タマネギ"],
             "url": "https://www.kikkoman.co.jp/homecook/search/recipe/00006600/index.html"
