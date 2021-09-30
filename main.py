@@ -56,49 +56,50 @@ def callback():
  
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    sendMessage("こちらのレシピはいかがですか？")
+    user_id = event.source.user_id
+    sendMessage("こちらのレシピはいかがですか？", user_id)
     # レシピデータを追加
-    recipeData[event.source.user_id] = {index: 1, recipe: [
+    recipeData[user_id] = {"index": 1, "recipe": [
         {
-            title: "肉じゃが",
-            image_url = "https://www.kikkoman.co.jp/homecook/search/recipe/img/00006600.jpg",
-            material = ["にんじん", "タマネギ"],
-            url = "https://www.kikkoman.co.jp/homecook/search/recipe/00006600/index.html",
+            "title": "肉じゃが",
+            "image_url": "https://www.kikkoman.co.jp/homecook/search/recipe/img/00006600.jpg",
+            "material": ["にんじん", "タマネギ"],
+            "url": "https://www.kikkoman.co.jp/homecook/search/recipe/00006600/index.html"
         },
         {
-            title: "ポトフ",
-            image_url = "https://www.kikkoman.co.jp/homecook/search/recipe/img/00006600.jpg",
-            material = ["にんじん", "タマネギ"],
-            url = "https://www.kikkoman.co.jp/homecook/search/recipe/00006600/index.html",
+            "title": "ポトフ",
+            "image_url": "https://www.kikkoman.co.jp/homecook/search/recipe/img/00006600.jpg",
+            "material": ["にんじん", "タマネギ"],
+            "url": "https://www.kikkoman.co.jp/homecook/search/recipe/00006600/index.html"
         },
         {
-            title: "肉じゃが2",
-            image_url = "https://www.kikkoman.co.jp/homecook/search/recipe/img/00006600.jpg",
-            material = ["にんじん", "タマネギ"],
-            url = "https://www.kikkoman.co.jp/homecook/search/recipe/00006600/index.html",
+            "title": "肉じゃが2",
+            "image_url": "https://www.kikkoman.co.jp/homecook/search/recipe/img/00006600.jpg",
+            "material": ["にんじん", "タマネギ"],
+            "url": "https://www.kikkoman.co.jp/homecook/search/recipe/00006600/index.html"
         },
         {
-            title: "ポトフ2",
-            image_url = "https://www.kikkoman.co.jp/homecook/search/recipe/img/00006600.jpg",
-            material = ["にんじん", "タマネギ"],
-            url = "https://www.kikkoman.co.jp/homecook/search/recipe/00006600/index.html",
-        },
+            "title": "ポトフ2",
+            "image_url": "https://www.kikkoman.co.jp/homecook/search/recipe/img/00006600.jpg",
+            "material": ["にんじん", "タマネギ"],
+            "url": "https://www.kikkoman.co.jp/homecook/search/recipe/00006600/index.html"
+        }
     ]}
     caroucelCol = []
-    for recipe in recipeData[event.source.user_id].recipe[0:1]:
+    for recipe in recipeData[user_id]["recipe"][0:2]:
         caroucelCol.append(CarouselColumn(
-            thumbnail_image_url = recipe.image_url,
-            title = recipe.title,
-            text = "，".join(recipe.material),
+            thumbnail_image_url = recipe["image_url"],
+            title = recipe["title"],
+            text = "，".join(recipe["material"]),
             actions=[
                 URIAction(
                     label='レシピを確認する',
-                    uri = recipe.uri
+                    uri = recipe["url"]
                 )
             ]
         ))
     line_bot_api.push_message(
-        event.source.user_id,
+        user_id,
         TemplateSendMessage(
             alt_text = 'Carousel template',
             template = CarouselTemplate(
@@ -107,7 +108,7 @@ def handle_message(event):
         ) 
     )
     line_bot_api.push_message(
-        event.source.user_id,
+        user_id,
         TemplateSendMessage(
             alt_text='Confirm template',
             template=ConfirmTemplate(
@@ -130,28 +131,31 @@ def handle_message(event):
 
 @handler.add(PostbackEvent)
 def handle_event(event):
+    user_id = event.source.user_id
     if event.postback.data == "yes":
-       del recipeData[event.source.user_id]
-       sendMessage("調理頑張ってください！")
+       del recipeData[user_id]
+       sendMessage("調理頑張ってください！", user_id)
     else:
         # レシピが提案できるかどうか
-        if():
-            sendMessage("こちらのレシピはいかがでしょうか?")
+        if(recipeData[user_id]["index"] + 1 < len(recipeData[user_id]["recipe"])):
+            sendMessage("こちらのレシピはいかがでしょうか?", user_id)
+            index = recipeData[user_id]["index"]
+            recipeData[user_id]["index"] = index + 1
             caroucelCol = []
-            for recipe in recipeData[event.source.user_id].recipe[2:3]:
+            for recipe in recipeData[user_id]["recipe"][index:index + 1]:
                 caroucelCol.append(CarouselColumn(
-                    thumbnail_image_url = recipe.image_url,
-                    title = recipe.title,
-                    text = "，".join(recipe.material),
+                    thumbnail_image_url = recipe["image_url"],
+                    title = recipe["title"],
+                    text = "，".join(recipe["material"]),
                     actions=[
                         URIAction(
                             label='レシピを確認する',
-                            uri = recipe.uri
+                            uri = recipe["uri"]
                         )
                     ]
                 ))
             line_bot_api.push_message(
-                event.source.user_id,
+                user_id,
                 TemplateSendMessage(
                     alt_text = 'Carousel template',
                     template = CarouselTemplate(
@@ -159,13 +163,13 @@ def handle_event(event):
                     )
                 ) 
             )
-        else():
-            del recipeData[event.source.user_id]
-            sendMessage("ごめんなさい！これ以上レシピを提案できません(>_<)")
+        else:
+            del recipeData[user_id]
+            sendMessage("ごめんなさい！これ以上レシピを提案できません(>_<)", user_id)
 
-def sendMessage(message):
+def sendMessage(message, user_id):
     line_bot_api.push_message(
-        event.source.user_id,
+        user_id,
         TextSendMessage(message)
     )
 
