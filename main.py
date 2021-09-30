@@ -52,7 +52,7 @@ def callback():
         abort(400)
     # handleの処理を終えればOK
     return 'OK'
- 
+
 # メッセージが送信された時の処理
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
@@ -75,8 +75,8 @@ def handle_event(event):
         del recipeData[user_id]
         sendMessage("調理頑張ってください！", user_id)
     else:
-        # レシピが提案できるかどうか
-        if(recipeData[user_id]["index"] + 1 <= len(recipeData[user_id]["recipe"])):
+        is_possible_to_recommend = recipeData[user_id]["index"] + 1 <= len(recipeData[user_id]["recipe"])
+        if(is_possible_to_recommend):
             sendMessage("こちらのレシピはいかがでしょうか?", user_id)
             sendCarousel(getDisplayCarousel(recipeData, user_id), user_id)
             sendConfirm(user_id)
@@ -143,6 +143,7 @@ def getDisplayCarousel(recipeData, user_id):
             ]
         ), recipeData[user_id]["recipe"][index:index + 2]))
 
+# レシピの受け取り
 def getRecipe():
     return [
         {
@@ -176,6 +177,7 @@ def getRecipe():
             "url": "https://www.kikkoman.co.jp/homecook/search/recipe/00006600/index.html"
         }
     ]
+
 # ポート番号の設定
 if __name__ == "__main__":
 #    app.run()
