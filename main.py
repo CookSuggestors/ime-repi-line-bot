@@ -27,6 +27,7 @@ app = Flask(__name__)
 # 環境変数取得
 CHANNEL_ACCESS_TOKEN = os.environ["CHANNEL_ACCESS_TOKEN"]
 CHANNEL_SECRET = os.environ["CHANNEL_SECRET"]
+DISPLAYCOUNT = 3
  
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
@@ -130,7 +131,7 @@ def sendCarousel(col, user_id):
 # 表示するカルーセルの取得
 def getDisplayCarousel(recipeData, user_id):
     index = recipeData[user_id]["index"]
-    recipeData[user_id]["index"] += 2
+    recipeData[user_id]["index"] += DISPLAYCOUNT
     return list(map(lambda recipe: CarouselColumn(
             thumbnail_image_url = recipe["image_url"],
             title = recipe["title"],
@@ -141,7 +142,7 @@ def getDisplayCarousel(recipeData, user_id):
                     uri = recipe["url"]
                 )
             ]
-        ), recipeData[user_id]["recipe"][index:index + 2]))
+        ), recipeData[user_id]["recipe"][index:index + DISPLAYCOUNT]))
 
 # レシピの受け取り
 def getRecipe():
