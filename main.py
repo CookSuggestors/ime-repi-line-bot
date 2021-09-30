@@ -21,9 +21,9 @@ from linebot.models import (
      ConfirmTemplate
 )
 import os
- 
+
 app = Flask(__name__)
- 
+
 # 環境変数取得
 CHANNEL_ACCESS_TOKEN = os.environ["CHANNEL_ACCESS_TOKEN"]
 CHANNEL_SECRET = os.environ["CHANNEL_SECRET"]
@@ -59,7 +59,7 @@ def handle_message(event):
     user_id = event.source.user_id
     sendMessage("こちらのレシピはいかがですか？", user_id)
     # レシピデータを追加
-    recipeData[user_id] = {"index": 1, "recipe": [
+    recipeData[user_id] = {"index": 0, "recipe": [
         {
             "title": "肉じゃが",
             "image_url": "https://www.kikkoman.co.jp/homecook/search/recipe/img/00006600.jpg",
@@ -137,12 +137,12 @@ def handle_event(event):
        sendMessage("調理頑張ってください！", user_id)
     else:
         # レシピが提案できるかどうか
-        if(recipeData[user_id]["index"] + 1 < len(recipeData[user_id]["recipe"])):
+        if(recipeData[user_id]["index"] + 2 < len(recipeData[user_id]["recipe"])):
             sendMessage("こちらのレシピはいかがでしょうか?", user_id)
+            recipeData[user_id]["index"] += 2
             index = recipeData[user_id]["index"]
-            recipeData[user_id]["index"] = index + 1
             caroucelCol = []
-            for recipe in recipeData[user_id]["recipe"][index:index + 1]:
+            for recipe in recipeData[user_id]["recipe"][index:index + 2]:
                 caroucelCol.append(CarouselColumn(
                     thumbnail_image_url = recipe["image_url"],
                     title = recipe["title"],
@@ -150,7 +150,7 @@ def handle_event(event):
                     actions=[
                         URIAction(
                             label='レシピを確認する',
-                            uri = recipe["uri"]
+                            uri = recipe["url"]
                         )
                     ]
                 ))
@@ -162,6 +162,27 @@ def handle_event(event):
                         columns = caroucelCol
                     )
                 ) 
+            )
+            line_bot_api.push_message(
+                user_id,
+                TemplateSendMessage(
+                    alt_text='Confirm template',
+                    template=ConfirmTemplate(
+                        text='作りたいメニューはありましたか？',
+                        actions=[
+                            PostbackAction(
+                                label='はい',
+                                display_text='はい',
+                                data='yes'
+                            ),
+                            PostbackAction(
+                                label='いいえ',
+                                display_text='いいえ',
+                                data='no'
+                            ),
+                        ]
+                    )
+                )
             )
         else:
             del recipeData[user_id]
@@ -178,4 +199,3 @@ if __name__ == "__main__":
 #    app.run()
     port = int(os.getenv("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
