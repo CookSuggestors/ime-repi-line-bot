@@ -68,9 +68,12 @@ def handle_message(event):
 @handler.add(PostbackEvent)
 def handle_event(event):
     user_id = event.source.user_id
+    if(not user_id in recipeData):
+        sendMessage("食材を送信してください( ´ ▽ ` )", user_id)
+        return
     if event.postback.data == "yes":
-       del recipeData[user_id]
-       sendMessage("調理頑張ってください！", user_id)
+        del recipeData[user_id]
+        sendMessage("調理頑張ってください！", user_id)
     else:
         # レシピが提案できるかどうか
         if(recipeData[user_id]["index"] + 2 <= len(recipeData[user_id]["recipe"])):
