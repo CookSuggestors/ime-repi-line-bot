@@ -131,9 +131,7 @@ def sendCarousel(col, user_id):
 def getDisplayCarousel(recipeData, user_id):
     index = recipeData[user_id]["index"]
     recipeData[user_id]["index"] += 2
-    caroucelCol = []
-    for recipe in recipeData[user_id]["recipe"][index:index + 2]:
-        caroucelCol.append(CarouselColumn(
+    return list(map(lambda recipe: CarouselColumn(
             thumbnail_image_url = recipe["image_url"],
             title = recipe["title"],
             text = "，".join(recipe["material"]),
@@ -143,8 +141,7 @@ def getDisplayCarousel(recipeData, user_id):
                     uri = recipe["url"]
                 )
             ]
-        ))
-    return caroucelCol
+        ), recipeData[user_id]["recipe"][index:index + 2]))
 
 def getRecipe():
     return [
