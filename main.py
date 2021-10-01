@@ -165,23 +165,26 @@ def sendStamp(user_id):
 def getDisplayCarousel(recipeData, user_id):
     index = recipeData[user_id]["index"]
     recipeData[user_id]["index"] += DISPLAYCOUNT
+    return list(map(lambda recipe: getRow(recipe), recipeData[user_id]["recipe"][index:index + DISPLAYCOUNT]))
+
+def getRow(recipe):
+    text = ""
     for material in recipe["notMatchRecipeMaterial"]:
         # 60字越えるかどうかをチェック
-        if(len(text + material + 1) >= 60):
+        if(len(text + material) + 1 >= 60):
             break
         text += material + ","
-    return list(map(lambda recipe: CarouselColumn(
-            thumbnail_image_url = recipe["foodImageUrl"],
-            title = recipe["recipeTitle"],
-            text = text[:-1], # 最後のカンマを除去
-            actions=[
-                URIAction(
-                    label='レシピを確認する',
-                    uri = recipe["recipeUrl"]
-                )
-            ]
-        ), recipeData[user_id]["recipe"][index:index + DISPLAYCOUNT]))
-
+    return CarouselColumn(
+        thumbnail_image_url = recipe["foodImageUrl"],
+        title = recipe["recipeTitle"],
+        text = text[:-1], # 最後のカンマを除去
+        actions=[
+            URIAction(
+                label='レシピを確認する',
+                uri = recipe["recipeUrl"]
+            )
+        ]
+    )
 # レシピの受け取り
 def getRecipe(input):
     url = RAKUTEN_API_ENDPOINT + "?input=" + input
