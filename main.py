@@ -167,7 +167,8 @@ def getDisplayCarousel(recipeData, user_id):
     recipeData[user_id]["index"] += DISPLAYCOUNT
     for material in recipe["notMatchRecipeMaterial"]:
         # 60字越えるかどうかをチェック
-        if(len(text + material + 1) >= 60) break
+        if(len(text + material + 1) >= 60):
+            break
         text += material + ","
     return list(map(lambda recipe: CarouselColumn(
             thumbnail_image_url = recipe["foodImageUrl"],
