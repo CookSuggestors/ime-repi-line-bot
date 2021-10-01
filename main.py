@@ -9,17 +9,17 @@ from linebot.exceptions import (
 )
 from linebot.models import (
     MessageEvent,
-     PostbackEvent,
-     TextMessage,
-     TemplateSendMessage,
-     CarouselTemplate,
-     CarouselColumn,
-     MessageAction,
-     URIAction,
-     PostbackAction,
-     TextSendMessage,
-     TemplateSendMessage,
-     ConfirmTemplate
+    PostbackEvent,
+    TextMessage,
+    TemplateSendMessage,
+    TextSendMessage,
+    StickerSendMessage
+    CarouselTemplate,
+    CarouselColumn,
+    MessageAction,
+    URIAction,
+    PostbackAction,
+    ConfirmTemplate
 )
 import os
 
@@ -78,6 +78,7 @@ def handle_event(event):
     if event.postback.data == "yes":
         del recipeData[user_id]
         sendMessage("調理頑張ってください！", user_id)
+        sendStamp(user_id)
     else:
         is_possible_to_recommend = recipeData[user_id]["index"] + 1 <= len(recipeData[user_id]["recipe"])
         if(is_possible_to_recommend):
@@ -129,6 +130,34 @@ def sendCarousel(col, user_id):
                 columns = col
             )
         ) 
+    )
+
+def sendStamp(user_id):
+    patern = [
+        {
+            "package_id": "11538",
+            "sticker_id": "51626517"
+        },
+        {
+            "package_id": "446",
+            "sticker_id": "1997"
+        },
+        {
+            "package_id": "1070",
+            "sticker_id": "17840"
+        },
+        {
+            "package_id": "11537",
+            "sticker_id": "52002735"
+        }
+    ]
+    stamp = patern[int(random.random() * 10 % 4)]
+    line_bot_api.push_message(
+        user_id,
+        StickerSendMessage(
+            "package_id": stamp["package_id"],
+            "sticker_id": stamp["sticker_id"],
+        )
     )
 
 # 表示するカルーセルの取得
