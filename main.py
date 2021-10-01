@@ -60,10 +60,11 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     # TODO: 材料が送信されているかどうか
+    message = event.message.text
     user_id = event.source.user_id
     sendMessage("こちらのレシピはいかがですか？", user_id)
     # ユーザーデータを作成
-    recipeData[user_id] = {"index": 0, "recipe": getRecipe()}
+    recipeData[user_id] = {"index": 0, "recipe": getRecipe(message)}
     sendCarousel(getDisplayCarousel(recipeData, user_id), user_id)
     sendConfirm(user_id)
 
@@ -148,7 +149,7 @@ def getDisplayCarousel(recipeData, user_id):
 
 # レシピの受け取り
 def getRecipe(input):
-    url = RAKUTEN_API_ENDPOINT + "?input=" + ",".join(input)
+    url = RAKUTEN_API_ENDPOINT + "?input=" + input
     res = requests.get(url)
     return res.json()
 
