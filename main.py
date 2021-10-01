@@ -1,5 +1,6 @@
 from flask import Flask, request, abort
- 
+import requests
+
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -28,6 +29,7 @@ app = Flask(__name__)
 CHANNEL_ACCESS_TOKEN = os.environ["CHANNEL_ACCESS_TOKEN"]
 CHANNEL_SECRET = os.environ["CHANNEL_SECRET"]
 DISPLAYCOUNT = 3
+RAKUTEN_API_ENDPOINT = os.environ["RAKUTEN_API_ENDPOINT"]
  
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
@@ -133,54 +135,24 @@ def getDisplayCarousel(recipeData, user_id):
     index = recipeData[user_id]["index"]
     recipeData[user_id]["index"] += DISPLAYCOUNT
     return list(map(lambda recipe: CarouselColumn(
-            thumbnail_image_url = recipe["image_url"],
-            title = recipe["title"],
-            text = "，".join(recipe["material"]),
+            thumbnail_image_url = recipe["foodImageUrl"],
+            title = recipe["recipeTitle"],
+            text = "，".join(recipe["notMatchRecipeMaterial"]),
             actions=[
                 URIAction(
                     label='レシピを確認する',
-                    uri = recipe["url"]
+                    uri = recipe["recipeUrl"]
                 )
             ]
         ), recipeData[user_id]["recipe"][index:index + DISPLAYCOUNT]))
 
 # レシピの受け取り
-def getRecipe():
-    return [
-        {
-            "title": "肉じゃが",
-            "image_url": "https://www.kikkoman.co.jp/homecook/search/recipe/img/00006600.jpg",
-            "material": ["にんじん", "タマネギ"],
-            "url": "https://www.kikkoman.co.jp/homecook/search/recipe/00006600/index.html"
-        },
-        {
-            "title": "ポトフ",
-            "image_url": "https://www.kikkoman.co.jp/homecook/search/recipe/img/00006600.jpg",
-            "material": ["にんじん", "タマネギ"],
-            "url": "https://www.kikkoman.co.jp/homecook/search/recipe/00006600/index.html"
-        },
-        {
-            "title": "肉じゃが2",
-            "image_url": "https://www.kikkoman.co.jp/homecook/search/recipe/img/00006600.jpg",
-            "material": ["にんじん", "タマネギ"],
-            "url": "https://www.kikkoman.co.jp/homecook/search/recipe/00006600/index.html"
-        },
-        {
-            "title": "ポトフ2",
-            "image_url": "https://www.kikkoman.co.jp/homecook/search/recipe/img/00006600.jpg",
-            "material": ["にんじん", "タマネギ"],
-            "url": "https://www.kikkoman.co.jp/homecook/search/recipe/00006600/index.html"
-        },
-        {
-            "title": "ポトフ3",
-            "image_url": "https://www.kikkoman.co.jp/homecook/search/recipe/img/00006600.jpg",
-            "material": ["にんじん", "タマネギ"],
-            "url": "https://www.kikkoman.co.jp/homecook/search/recipe/00006600/index.html"
-        }
-    ]
+def getRecipe(input):
+    url = RAKUTEN_API_ENDPOINT + "?input=" + ",".join(input)
+    res = requests.get(url)
+    return res.json()
 
 # ポート番号の設定
 if __name__ == "__main__":
-#    app.run()
     port = int(os.getenv("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
