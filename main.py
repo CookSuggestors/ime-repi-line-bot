@@ -34,6 +34,24 @@ RAKUTEN_API_ENDPOINT = os.environ["RAKUTEN_API_ENDPOINT"]
  
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
+support_patern = [
+    {
+        "package_id": "11538",
+        "sticker_id": "51626517"
+    },
+    {
+        "package_id": "446",
+        "sticker_id": "1997"
+    },
+    {
+        "package_id": "1070",
+        "sticker_id": "17840"
+    },
+    {
+        "package_id": "11537",
+        "sticker_id": "52002735"
+    }
+]
 
 # ユーザーの一時保存
 recipeData = {}
@@ -63,9 +81,10 @@ def handle_message(event):
     # TODO: 材料が送信されているかどうか
     message = event.message.text
     user_id = event.source.user_id
-    sendMessage("こちらのレシピはいかがですか？", user_id)
+    sendMessage("しばらくお待ちください...", user_id)
     # ユーザーデータを作成
     recipeData[user_id] = {"index": 0, "recipe": getRecipe(message)}
+    sendMessage("こちらのレシピはいかがですか？", user_id)
     sendCarousel(getDisplayCarousel(recipeData, user_id), user_id)
     sendConfirm(user_id)
 
@@ -74,12 +93,12 @@ def handle_message(event):
 def handle_event(event):
     user_id = event.source.user_id
     if(not user_id in recipeData):
-        sendMessage("食材を送信してください( ´ ▽ ` )", user_id)
+        sendMessage("食材を送信してください！", user_id)
         return
     if event.postback.data == "yes":
         del recipeData[user_id]
         sendMessage("調理頑張ってください！", user_id)
-        sendStamp(user_id)
+        sendStamp(user_id, support_patern)
     else:
         is_possible_to_recommend = recipeData[user_id]["index"] + 1 <= len(recipeData[user_id]["recipe"])
         if(is_possible_to_recommend):
@@ -133,26 +152,8 @@ def sendCarousel(col, user_id):
         ) 
     )
 
-def sendStamp(user_id):
-    patern = [
-        {
-            "package_id": "11538",
-            "sticker_id": "51626517"
-        },
-        {
-            "package_id": "446",
-            "sticker_id": "1997"
-        },
-        {
-            "package_id": "1070",
-            "sticker_id": "17840"
-        },
-        {
-            "package_id": "11537",
-            "sticker_id": "52002735"
-        }
-    ]
-    stamp = patern[int(random.random() * 10 % 4)]
+def sendStamp(user_id, patern):
+    stamp = patern[int(random.random() * 10 % len(patern))]
     line_bot_api.push_message(
         user_id,
         StickerSendMessage(
