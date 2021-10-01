@@ -1,5 +1,6 @@
 from flask import Flask, request, abort
 import requests
+import random
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -13,7 +14,7 @@ from linebot.models import (
     TextMessage,
     TemplateSendMessage,
     TextSendMessage,
-    StickerSendMessage
+    StickerSendMessage,
     CarouselTemplate,
     CarouselColumn,
     MessageAction,
@@ -155,8 +156,8 @@ def sendStamp(user_id):
     line_bot_api.push_message(
         user_id,
         StickerSendMessage(
-            "package_id": stamp["package_id"],
-            "sticker_id": stamp["sticker_id"],
+            package_id = stamp["package_id"],
+            sticker_id = stamp["sticker_id"]
         )
     )
 
