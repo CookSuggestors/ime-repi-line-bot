@@ -165,10 +165,14 @@ def sendStamp(user_id):
 def getDisplayCarousel(recipeData, user_id):
     index = recipeData[user_id]["index"]
     recipeData[user_id]["index"] += DISPLAYCOUNT
+    for material in recipe["notMatchRecipeMaterial"]:
+        # 60字越えるかどうかをチェック
+        if(len(text + material + 1) >= 60) break
+        text += material + ","
     return list(map(lambda recipe: CarouselColumn(
             thumbnail_image_url = recipe["foodImageUrl"],
             title = recipe["recipeTitle"],
-            text = "，".join(recipe["notMatchRecipeMaterial"]),
+            text = text[:-1], # 最後のカンマを除去
             actions=[
                 URIAction(
                     label='レシピを確認する',
