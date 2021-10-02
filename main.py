@@ -95,6 +95,7 @@ def handle_message(event):
         sendCarousel(getDisplayCarousel(recipeData, user_id), user_id)
         sendConfirm(user_id)
     except:
+        del recipeData[user_id]
         sendMessage("サーバーが混雑しているので，少し時間をおいてからお試しください！", user_id)
 
 # ユーザが操作した後の処理
