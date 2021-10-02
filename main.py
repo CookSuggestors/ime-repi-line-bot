@@ -80,16 +80,19 @@ def callback():
 def handle_message(event):
     # TODO: 材料が送信されているかどうか
     message = event.message.text
-    split_mate = message.split("食材: ")
-    if(len(split_mate) <= 1):
-        return
+    # split_mate = message.split("食材: ")
+    # if(len(split_mate) <= 1):
+    #     return
     user_id = event.source.user_id
-    sendMessage("しばらくお待ちください...", user_id)
-    # ユーザーデータを作成
-    recipeData[user_id] = {"index": 0, "recipe": getRecipe(split_mate[1])}
-    sendMessage("こちらのレシピはいかがですか？", user_id)
-    sendCarousel(getDisplayCarousel(recipeData, user_id), user_id)
-    sendConfirm(user_id)
+    try:
+        sendMessage("しばらくお待ちください...", user_id)
+        # ユーザーデータを作成
+        recipeData[user_id] = {"index": 0, "recipe": getRecipe(message)}
+        sendMessage("こちらのレシピはいかがですか？", user_id)
+        sendCarousel(getDisplayCarousel(recipeData, user_id), user_id)
+        sendConfirm(user_id)
+    except:
+        sendMessage("サーバーが混雑しているので，少し時間をおいてからお試しください！", user_id)
 
 # ユーザが操作した後の処理
 @handler.add(PostbackEvent)
