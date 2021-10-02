@@ -85,9 +85,9 @@ def handle_message(event):
     #     return
     user_id = event.source.user_id
     # すでに送信してたら，何も返さない
-    recipeData[user_id] = {"index": 0}
     if(user_id in recipeData):
         return
+    recipeData[user_id] = {"index": 0}
     try:
         sendMessage("しばらくお待ちください...", user_id)
         recipeData[user_id]["recipe"] = getRecipe(message)
