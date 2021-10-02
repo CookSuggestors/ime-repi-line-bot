@@ -85,12 +85,13 @@ def handle_message(event):
     #     return
     user_id = event.source.user_id
     # すでに送信してたら，何も返さない
+    recipeData[user_id] = {"index": 0}
     if(user_id in recipeData):
         return
     try:
         sendMessage("しばらくお待ちください...", user_id)
+        recipeData[user_id]["recipe"] = getRecipe(message)
         # ユーザーデータを作成
-        recipeData[user_id] = {"index": 0, "recipe": getRecipe(message)}
         sendMessage("こちらのレシピはいかがですか？", user_id)
         sendCarousel(getDisplayCarousel(recipeData, user_id), user_id)
         sendConfirm(user_id)
