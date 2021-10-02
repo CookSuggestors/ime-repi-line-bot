@@ -89,7 +89,7 @@ def handle_message(event):
     recipeData[user_id] = {"index": 0}
     try:
         sendMessage("しばらくお待ちください...", user_id)
-        recipeData[user_id]["recipe"] = getRecipe(split_mate)
+        recipeData[user_id]["recipe"] = getRecipe(split_mate[1])
         # ユーザーデータを作成
         sendMessage("こちらのレシピはいかがですか？", user_id)
         sendCarousel(getDisplayCarousel(recipeData, user_id), user_id)
