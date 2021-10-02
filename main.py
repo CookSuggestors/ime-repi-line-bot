@@ -78,11 +78,10 @@ def callback():
 # メッセージが送信された時の処理
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    # TODO: 材料が送信されているかどうか
     message = event.message.text
-    # split_mate = message.split("食材: ")
-    # if(len(split_mate) <= 1):
-    #     return
+    split_mate = message.split("食材: ")
+    if(len(split_mate) <= 1):
+        return
     user_id = event.source.user_id
     # すでに送信してたら，何も返さない
     if(user_id in recipeData):
@@ -90,7 +89,7 @@ def handle_message(event):
     recipeData[user_id] = {"index": 0}
     try:
         sendMessage("しばらくお待ちください...", user_id)
-        recipeData[user_id]["recipe"] = getRecipe(message)
+        recipeData[user_id]["recipe"] = getRecipe(split_mate)
         # ユーザーデータを作成
         sendMessage("こちらのレシピはいかがですか？", user_id)
         sendCarousel(getDisplayCarousel(recipeData, user_id), user_id)
