@@ -84,6 +84,9 @@ def handle_message(event):
     # if(len(split_mate) <= 1):
     #     return
     user_id = event.source.user_id
+    # すでに送信してたら，何も返さない
+    if(user_id in recipeData):
+        return
     try:
         sendMessage("しばらくお待ちください...", user_id)
         # ユーザーデータを作成
