@@ -23,17 +23,20 @@ from linebot.models import (
     ConfirmTemplate
 )
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
 
-# 環境変数取得
-CHANNEL_ACCESS_TOKEN = os.environ["CHANNEL_ACCESS_TOKEN"]
-CHANNEL_SECRET = os.environ["CHANNEL_SECRET"]
-DISPLAYCOUNT = 3
-RAKUTEN_API_ENDPOINT = os.environ["RAKUTEN_API_ENDPOINT"]
- 
+CHANNEL_ACCESS_TOKEN = os.getenv('CHANNEL_ACCESS_TOKEN')
+CHANNEL_SECRET = os.getenv('CHANNEL_SECRET')
+RAKUTEN_API_ENDPOINT = os.getenv('RAKUTEN_API_ENDPOINT')
+
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
+
+DISPLAYCOUNT = 3
+ 
 support_patern = [
     {
         "package_id": "11538",
@@ -80,6 +83,7 @@ def callback():
 def handle_message(event):
     message = event.message.text
     split_mate = message.split("食材: ")
+    # 食材かどうか
     if(len(split_mate) <= 1):
         return
     user_id = event.source.user_id
@@ -89,7 +93,7 @@ def handle_message(event):
     recipeData[user_id] = {"index": 0}
     try:
         sendMessage("しばらくお待ちください...", user_id)
-        recipeData[user_id]["recipe"] = getRecipe(split_mate)
+        recipeData[user_id]["recipe"] = getRecipe(split_mate[1])
         # ユーザーデータを作成
         sendMessage("こちらのレシピはいかがですか？", user_id)
         sendCarousel(getDisplayCarousel(recipeData, user_id), user_id)
