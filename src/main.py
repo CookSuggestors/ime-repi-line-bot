@@ -23,17 +23,20 @@ from linebot.models import (
     ConfirmTemplate
 )
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
 
-# 環境変数取得
-CHANNEL_ACCESS_TOKEN = os.environ["CHANNEL_ACCESS_TOKEN"]
-CHANNEL_SECRET = os.environ["CHANNEL_SECRET"]
-DISPLAYCOUNT = 3
-RAKUTEN_API_ENDPOINT = os.environ["RAKUTEN_API_ENDPOINT"]
- 
+CHANNEL_ACCESS_TOKEN = os.getenv('CHANNEL_ACCESS_TOKEN')
+CHANNEL_SECRET = os.getenv('CHANNEL_SECRET')
+RAKUTEN_API_ENDPOINT = os.getenv('RAKUTEN_API_ENDPOINT')
+
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
+
+DISPLAYCOUNT = 3
+ 
 support_patern = [
     {
         "package_id": "11538",
