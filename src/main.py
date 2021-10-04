@@ -80,6 +80,7 @@ def callback():
 def handle_message(event):
     message = event.message.text
     split_mate = message.split("食材: ")
+    # 食材かどうか
     if(len(split_mate) <= 1):
         return
     user_id = event.source.user_id
